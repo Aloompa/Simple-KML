@@ -34,6 +34,7 @@
 #import "SimpleKMLDocument.h"
 #import "SimpleKMLStyle.h"
 #import "SimpleKMLFeature.h"
+#import "SimpleKMLStyleMap.h"
 
 @implementation SimpleKMLDocument
 
@@ -55,7 +56,7 @@
             {
                 id thisChild = [[childClass alloc] initWithXMLNode:child sourceURL:sourceURL error:NULL];
                 
-                if (thisChild && [thisChild isKindOfClass:[SimpleKMLStyle class]])
+                if (thisChild && [thisChild isKindOfClass:[SimpleKMLStyleSelector class]])
                     [parsedStyles addObject:thisChild];
             }
         }
@@ -65,6 +66,20 @@
         for (SimpleKMLFeature *feature in self.flattenedPlacemarks)
             if (feature.sharedStyleID && ! feature.sharedStyle)
                 feature.sharedStyle = [self sharedStyleWithID:feature.sharedStyleID];
+        
+        for(SimpleKMLStyleSelector *styleSelector in self.sharedStyles) {
+            
+            if([styleSelector isKindOfClass:[SimpleKMLStyleMap class]]) {
+                
+                SimpleKMLStyleMap *styleMap = (SimpleKMLStyleMap *)styleSelector;
+                if(!styleMap.normalStyle) {
+                    styleMap.normalStyle = [self sharedStyleWithID:styleMap.normalSharedStyleID];
+                }
+                if(!styleMap.highlightStyle) {
+                    styleMap.highlightStyle = [self sharedStyleWithID:styleMap.highlightSharedStyleID];
+                }
+            }
+        }
     }
     
     return self;
@@ -72,7 +87,7 @@
 
 #pragma mark -
 
-- (SimpleKMLStyle *)sharedStyleWithID:(NSString *)styleID
+- (SimpleKMLStyleSelector *)sharedStyleWithID:(NSString *)styleID
 {
     for (SimpleKMLStyle *theStyle in self.sharedStyles)
         if ([[theStyle objectID] isEqualToString:styleID])

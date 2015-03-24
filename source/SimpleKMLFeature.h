@@ -36,6 +36,7 @@
 #import "SimpleKMLObject.h"
 
 @class SimpleKMLStyle;
+@class SimpleKMLStyleSelector;
 @class SimpleKMLDocument;
 
 @interface SimpleKMLFeature : SimpleKMLObject
@@ -44,7 +45,7 @@
 @property (nonatomic, strong, readonly) NSString *featureDescription;
 @property (nonatomic, strong, readonly) NSString *sharedStyleID;
 @property (nonatomic, strong, readonly) SimpleKMLStyle *inlineStyle;
-@property (nonatomic, strong, readonly) SimpleKMLStyle *style;
+@property (nonatomic, strong, readonly) SimpleKMLStyleSelector *style;
 @property (nonatomic, weak) SimpleKMLStyle *sharedStyle;
 @property (nonatomic, weak) SimpleKMLDocument *document;
 

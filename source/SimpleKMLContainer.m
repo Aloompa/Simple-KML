@@ -34,6 +34,7 @@
 #import "SimpleKMLContainer.h"
 #import "SimpleKMLFeature.h"
 #import "SimpleKMLDocument.h"
+#import "SimpleKMLFolder.h"
 #import "SimpleKMLPlacemark.h"
 #import "CXMLNamespaceNode.h"
 
@@ -70,6 +71,7 @@
                 //
                 if ( ! parseError && [feature isKindOfClass:[SimpleKMLFeature class]])
                 {
+                    
                     if ([self isMemberOfClass:[SimpleKMLDocument class]])
                         ((SimpleKMLFeature *)feature).document = (SimpleKMLDocument *)self;
                     
