@@ -39,6 +39,7 @@
 @class SimpleKMLLineStyle;
 @class SimpleKMLPolyStyle;
 @class SimpleKMLBalloonStyle;
+@class SimpleKMLLabelStyle;
 
 @interface SimpleKMLStyle : SimpleKMLStyleSelector
 
@@ -46,5 +47,6 @@
 @property (nonatomic, strong, readonly) SimpleKMLLineStyle *lineStyle;
 @property (nonatomic, strong, readonly) SimpleKMLPolyStyle *polyStyle;
 @property (nonatomic, strong, readonly) SimpleKMLBalloonStyle *balloonStyle;
+@property (nonatomic, strong, readonly) SimpleKMLLabelStyle *labelStyle;
 
 @end

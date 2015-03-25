@@ -38,9 +38,13 @@
 #define kSimpleKMLIconStyleDefaultHeading  0.0f
 #define kSimpleKMLIconStyleBaseIconSize   32.0f
 
-@implementation SimpleKMLIconStyle
+@interface SimpleKMLIconStyle()
 
-@synthesize icon;
+@property (nonatomic, strong, readwrite) NSString *imageName;
+
+@end
+
+@implementation SimpleKMLIconStyle
 
 - (id)initWithXMLNode:(CXMLNode *)node sourceURL:sourceURL error:(NSError **)error
 {
@@ -48,15 +52,9 @@
     
     if (self != nil)
     {
-        icon = nil;
-        
-        UIImage *baseIcon   = nil;
-        CGFloat baseScale   = kSimpleKMLIconStyleDefaultScale;
-        CGFloat baseHeading = kSimpleKMLIconStyleDefaultHeading;
-        
+
         for (CXMLNode *child in [node children])
         {
-#pragma mark TODO: we should be case folding here
             if ([[child name] isEqualToString:@"Icon"])
             {
                 // find the first element node child of the root
@@ -72,110 +70,12 @@
                     }
                 }
                 
-                if ( ! href)
-                {
-                    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"Improperly formed KML (no href specified for IconStyle Icon)" 
-                                                                         forKey:NSLocalizedFailureReasonErrorKey];
+                if(href) {
                     
-                    if (error)
-                        *error = [NSError errorWithDomain:SimpleKMLErrorDomain code:SimpleKMLParseError userInfo:userInfo];
-                    
-                    return nil;
-                }
-
-                NSData *data = nil;
-                
-                if ([self cacheObjectForKey:[href stringValue]])
-                    data = [self cacheObjectForKey:[href stringValue]];
-                
-                else
-                {
-                    NSURL *imageURL = [NSURL URLWithString:[href stringValue]];
-                    
-                    if ( ! imageURL)
-                    {
-                        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"Improperly formed KML (invalid icon URL specified in IconStyle)" 
-                                                                             forKey:NSLocalizedFailureReasonErrorKey];
-                        
-                        if (error)
-                            *error = [NSError errorWithDomain:SimpleKMLErrorDomain code:SimpleKMLParseError userInfo:userInfo];
-                        
-                        return nil;
-                    }
-                    
-                    if ([imageURL scheme])
-                        data = [NSData dataWithContentsOfURL:imageURL];
-                    
-                    else if ([[sourceURL relativePath] hasSuffix:@".kmz"])
-                        data = [SimpleKML dataFromArchiveAtPath:[sourceURL relativePath] withFilePath:[imageURL relativePath]];
-                    
-                    if (data)
-                        [self setCacheObject:data forKey:[href stringValue]];
-                    
-                    else
-                    {
-                        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"Improperly formed KML (invalid icon URL specified in IconStyle)" 
-                                                                             forKey:NSLocalizedFailureReasonErrorKey];
-                        
-                        if (error)
-                            *error = [NSError errorWithDomain:SimpleKMLErrorDomain code:SimpleKMLParseError userInfo:userInfo];
-                        
-                        return nil;
-                    }
-                }
-                
-                baseIcon = [UIImage imageWithData:data];
-                
-                if ( ! baseIcon)
-                {
-                    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"Improperly formed KML (unable to retrieve icon specified for IconStyle)" 
-                                                                         forKey:NSLocalizedFailureReasonErrorKey];
-                    
-                    if (error)
-                        *error = [NSError errorWithDomain:SimpleKMLErrorDomain code:SimpleKMLParseError userInfo:userInfo];
-                    
-                    return nil;
-                }
-            }
-            else if ([[child name] isEqualToString:@"scale"])
-            {
-                baseScale = (CGFloat)[[child stringValue] floatValue];
-
-                if (baseScale <= 0)
-                {
-                    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"Improperly formed KML (invalid icon scale specified in IconStyle)" 
-                                                                         forKey:NSLocalizedFailureReasonErrorKey];
-                    
-                    if (error)
-                        *error = [NSError errorWithDomain:SimpleKMLErrorDomain code:SimpleKMLParseError userInfo:userInfo];
-                    
-                    return nil;
-                }
-            }
-            else if ([[child name] isEqualToString:@"heading"])
-            {
-                baseHeading = (CGFloat)[[child stringValue] floatValue];
-
-                if (baseHeading < 0 || baseHeading > 360)
-                {
-                    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"Improperly formed KML (invalid icon heading specified in IconStyle)" 
-                                                                         forKey:NSLocalizedFailureReasonErrorKey];
-                    
-                    if (error)
-                        *error = [NSError errorWithDomain:SimpleKMLErrorDomain code:SimpleKMLParseError userInfo:userInfo];
-                    
-                    return nil;
+                    self.imageName = href.stringValue.lastPathComponent;
                 }
             }
         }
-        
-#pragma mark TODO: rotate image according to heading
-#pragma mark TODO: read in parent ColorStyle color & auto-apply to icon
-
-        CGFloat newWidth  = kSimpleKMLIconStyleBaseIconSize * baseScale;
-        CGFloat newHeight = kSimpleKMLIconStyleBaseIconSize * baseScale;
-        
-        icon = [baseIcon imageWithWidth:newWidth height:newHeight];
     }
     
     return self;

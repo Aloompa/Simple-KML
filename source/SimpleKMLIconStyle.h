@@ -37,6 +37,6 @@
 
 @interface SimpleKMLIconStyle : SimpleKMLColorStyle
 
-@property (nonatomic, strong, readonly) UIImage *icon; // automatically gets scale, heading, and parent color applied
+@property (nonatomic, strong, readonly) NSString *imageName;
 
 @end

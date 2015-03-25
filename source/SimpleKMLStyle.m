@@ -36,6 +36,7 @@
 #import "SimpleKMLLineStyle.h"
 #import "SimpleKMLPolyStyle.h"
 #import "SimpleKMLBalloonStyle.h"
+#import "SimpleKMLLabelStyle.h"
 
 @implementation SimpleKMLStyle
 
@@ -43,6 +44,7 @@
 @synthesize lineStyle;
 @synthesize polyStyle;
 @synthesize balloonStyle;
+@synthesize labelStyle;
 
 - (id)initWithXMLNode:(CXMLNode *)node sourceURL:sourceURL error:(NSError **)error
 {
@@ -54,6 +56,7 @@
         lineStyle    = nil;
         polyStyle    = nil;
         balloonStyle = nil;
+        labelStyle   = nil;
         
         for (CXMLNode *child in [node children])
         {
@@ -76,6 +79,10 @@
 
                     else if ([thisSubStyle isKindOfClass:[SimpleKMLBalloonStyle class]])
                         balloonStyle = thisSubStyle;
+                    
+                    else if ([thisSubStyle isKindOfClass:[SimpleKMLLabelStyle class]])
+                        labelStyle = thisSubStyle;
+
                 }
             }
         }
